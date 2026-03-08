@@ -223,40 +223,37 @@ export default function AdminPage() {
               {/* Image */}
               <div className="sm:col-span-2">
                 <label className="block text-sm font-semibold text-gray-600 mb-1">Imagen</label>
-                <div className="flex gap-3 items-start">
-                  <div
-                    className="w-20 h-20 rounded-xl border-2 border-dashed border-brand-200 bg-brand-50 flex items-center justify-center overflow-hidden flex-shrink-0 cursor-pointer hover:border-brand-400 transition-colors"
-                    onClick={() => fileRef.current?.click()}
-                  >
-                    {form.image_url ? (
-                      <img src={form.image_url} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <svg className="w-7 h-7 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div
+                  className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-brand-200 bg-brand-50 rounded-xl p-6 cursor-pointer hover:border-brand-400 hover:bg-brand-100 transition-colors"
+                  onClick={() => fileRef.current?.click()}
+                >
+                  {form.image_url ? (
+                    <div className="relative w-32 h-32">
+                      <img src={form.image_url} alt="" className="w-full h-full object-cover rounded-xl" />
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setForm({ ...form, image_url: '' }) }}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <svg className="w-10 h-10 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
-                    )}
-                  </div>
-                  <div className="flex-1 flex flex-col gap-2">
-                    <button
-                      type="button"
-                      onClick={() => fileRef.current?.click()}
-                      className="btn-secondary text-sm py-2"
-                      disabled={uploading}
-                    >
-                      {uploading ? 'Subiendo...' : 'Subir imagen'}
-                    </button>
-                    <input
-                      className="input-field text-sm"
-                      placeholder="O pegá una URL"
-                      value={form.image_url}
-                      onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-                    />
-                  </div>
+                      <p className="text-sm text-brand-400 font-medium">
+                        {uploading ? 'Subiendo...' : 'Tocá para subir una imagen'}
+                      </p>
+                      <p className="text-xs text-gray-400">PNG, JPG, WEBP</p>
+                    </>
+                  )}
                 </div>
                 <input
                   ref={fileRef}
                   type="file"
-                  accept="image/*"
+                  accept="image/png, image/jpeg, image/webp"
                   className="hidden"
                   onChange={handleImageUpload}
                 />
