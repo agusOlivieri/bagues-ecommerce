@@ -4,13 +4,14 @@ import { useState, useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import ProductCard from '@/components/ProductCard'
 import FeaturedSlider from '@/components/FeaturedSlider'
-import { Product, CATEGORIES } from '@/types'
+import { Product, CATEGORIES, PERFUME_BRANDS } from '@/types'
 
 export default function CatalogPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [selectedBrand, setSelectedBrand] = useState<string>('all')
 
   useEffect(() => {
     fetchProducts()
@@ -31,7 +32,8 @@ export default function CatalogPage() {
   const filtered = products.filter((p) => {
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase())
     const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory
-    return matchesSearch && matchesCategory
+    const matchesBrand = selectedCategory !== 'perfume' || selectedBrand === 'all' || p.brand === selectedBrand
+    return matchesSearch && matchesCategory && matchesBrand
   })
 
   const featuredProducts = products.filter((p) => p.featured)
@@ -64,7 +66,7 @@ export default function CatalogPage() {
 
       {/* Filters */}
       <section className="sticky top-16 z-40 bg-white/90 backdrop-blur-md border-b border-brand-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row gap-3">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:flex-wrap gap-3">
           {/* Search */}
           <div className="relative flex-1">
             <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,7 +84,7 @@ export default function CatalogPage() {
           {/* Category tabs - scrollable on mobile */}
           <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
             <button
-              onClick={() => setSelectedCategory('all')}
+              onClick={() => { setSelectedCategory('all'); setSelectedBrand('all') }}
               className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                 selectedCategory === 'all'
                   ? 'bg-brand-600 text-white shadow-md'
@@ -94,7 +96,7 @@ export default function CatalogPage() {
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.value}
-                onClick={() => setSelectedCategory(cat.value)}
+                onClick={() => { setSelectedCategory(cat.value); setSelectedBrand('all') }}
                 className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                   selectedCategory === cat.value
                     ? 'bg-brand-600 text-white shadow-md'
@@ -105,6 +107,35 @@ export default function CatalogPage() {
               </button>
             ))}
           </div>
+
+          {/* Brand subfiler — solo visible cuando se filtra por perfumes */}
+          {selectedCategory === 'perfume' && (
+            <div className=" flex gap-2 overflow-x-auto pb-1 sm:pb-0 no-scrollbar border-t border-brand-100 pt-2 sm:border-t-0 sm:pt-0 sm:border-l sm:pl-3">
+              <button
+                onClick={() => setSelectedBrand('all')}
+                className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  selectedBrand === 'all'
+                    ? 'bg-brand-800 text-white shadow-md'
+                    : 'bg-brand-100 text-brand-700 hover:bg-brand-200'
+                }`}
+              >
+                Todas las marcas
+              </button>
+              {PERFUME_BRANDS.map((b) => (
+                <button
+                  key={b.value}
+                  onClick={() => setSelectedBrand(b.value)}
+                  className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                    selectedBrand === b.value
+                      ? 'bg-brand-800 text-white shadow-md'
+                      : 'bg-brand-100 text-brand-700 hover:bg-brand-200'
+                  }`}
+                >
+                  🔓 {b.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -138,7 +169,7 @@ export default function CatalogPage() {
             <p className="text-sm text-gray-400 mb-4 font-medium">
               {filtered.length} {filtered.length === 1 ? 'producto' : 'productos'}
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {filtered.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

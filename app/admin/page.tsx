@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSession, signIn } from 'next-auth/react'
 import Navbar from '@/components/Navbar'
-import { Product, CATEGORIES } from '@/types'
+import { Product, CATEGORIES, PERFUME_BRANDS } from '@/types'
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? ''
 
@@ -11,6 +11,7 @@ const emptyForm = {
   name: '',
   description: '',
   category: 'perfume',
+  brand: '',
   stock: 0,
   price: 0,
   image_url: '',
@@ -84,6 +85,7 @@ export default function AdminPage() {
       name: product.name,
       description: product.description ?? '',
       category: product.category,
+      brand: product.brand ?? '',
       stock: product.stock,
       price: product.price ?? 0,
       image_url: product.image_url ?? '',
@@ -201,7 +203,7 @@ export default function AdminPage() {
                 <select
                   className="input-field"
                   value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+                  onChange={(e) => setForm({ ...form, category: e.target.value, brand: '' })}
                 >
                   {CATEGORIES.map((cat) => (
                     <option key={cat.value} value={cat.value}>
@@ -210,6 +212,23 @@ export default function AdminPage() {
                   ))}
                 </select>
               </div>
+
+              {/* Brand — solo para perfumes */}
+              {form.category === 'perfume' && (
+                <div>
+                  <label className="block text-sm font-semibold text-gray-600 mb-1">Marca</label>
+                  <select
+                    className="input-field"
+                    value={form.brand}
+                    onChange={(e) => setForm({ ...form, brand: e.target.value })}
+                  >
+                    <option value="">Sin marca específica</option>
+                    {PERFUME_BRANDS.map((b) => (
+                      <option key={b.value} value={b.value}>{b.label}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               {/* Stock */}
               <div>

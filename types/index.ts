@@ -3,6 +3,7 @@ export interface Product {
   name: string
   description: string | null
   category: string
+  brand: string | null
   stock: number
   price: number
   image_url: string | null
@@ -17,4 +18,8 @@ export const CATEGORIES = [
   { value: 'shampoo', label: 'Shampoos', emoji: '🚿' },
   { value: 'acondicionador', label: 'Acondicionadores', emoji: '✨' },
   { value: 'otro', label: 'Otros', emoji: '📦' },
+]
+
+export const PERFUME_BRANDS = [
+  { value: 'Unlock', label: 'Unlock' },
 ]
