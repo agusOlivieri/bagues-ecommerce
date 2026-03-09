@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import ProductCard from '@/components/ProductCard'
 import FeaturedSlider from '@/components/FeaturedSlider'
-import { Product, CATEGORIES, PERFUME_BRANDS } from '@/types'
+import { Product, Combo, CATEGORIES, PERFUME_BRANDS } from '@/types'
 
 export default function CatalogPage() {
   const [products, setProducts] = useState<Product[]>([])
+  const [combos, setCombos] = useState<Combo[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
@@ -19,11 +20,14 @@ export default function CatalogPage() {
 
   async function fetchProducts() {
     try {
-      const res = await fetch('/api/products')
-      const data = await res.json()
-      setProducts(data)
+      const [productsRes, combosRes] = await Promise.all([
+        fetch('/api/products'),
+        fetch('/api/combos'),
+      ])
+      setProducts(await productsRes.json())
+      setCombos(await combosRes.json())
     } catch (err) {
-      console.error('Error fetching products:', err)
+      console.error('Error fetching data:', err)
     } finally {
       setLoading(false)
     }
@@ -37,6 +41,7 @@ export default function CatalogPage() {
   })
 
   const featuredProducts = products.filter((p) => p.featured)
+  const featuredCombos = combos.filter((c) => c.featured)
 
   return (
     <div className="min-h-screen">
@@ -60,13 +65,13 @@ export default function CatalogPage() {
       </section>
 
       {/* Featured Slider */}
-      {featuredProducts.length > 0 && (
-        <FeaturedSlider products={featuredProducts} />
+      {(featuredProducts.length > 0 || featuredCombos.length > 0) && (
+        <FeaturedSlider products={featuredProducts} combos={featuredCombos} />
       )}
 
       {/* Filters */}
       <section className="sticky top-16 z-40 bg-white/90 backdrop-blur-md border-b border-brand-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:flex-wrap gap-3">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row gap-3">
           {/* Search */}
           <div className="relative flex-1">
             <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,7 +115,7 @@ export default function CatalogPage() {
 
           {/* Brand subfiler — solo visible cuando se filtra por perfumes */}
           {selectedCategory === 'perfume' && (
-            <div className=" flex gap-2 overflow-x-auto pb-1 sm:pb-0 no-scrollbar border-t border-brand-100 pt-2 sm:border-t-0 sm:pt-0 sm:border-l sm:pl-3">
+            <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0 no-scrollbar border-t border-brand-100 pt-2 sm:border-t-0 sm:pt-0 sm:border-l sm:pl-3">
               <button
                 onClick={() => setSelectedBrand('all')}
                 className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
@@ -169,7 +174,7 @@ export default function CatalogPage() {
             <p className="text-sm text-gray-400 mb-4 font-medium">
               {filtered.length} {filtered.length === 1 ? 'producto' : 'productos'}
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {filtered.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

@@ -11,6 +11,16 @@ export interface Product {
   created_at: string
 }
 
+export interface Combo {
+  id: string
+  name: string
+  description: string | null
+  image_url: string | null
+  featured: boolean
+  created_at: string
+  products?: Product[]
+}
+
 export const CATEGORIES = [
   { value: 'perfume', label: 'Perfumes', emoji: '🌸' },
   { value: 'aroma', label: 'Aromas', emoji: '🌹' },

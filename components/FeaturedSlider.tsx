@@ -2,37 +2,41 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
-import { Product } from '@/types'
+import { Product, Combo } from '@/types'
+
+type SliderItem =
+  | { type: 'product'; data: Product }
+  | { type: 'combo'; data: Combo }
 
 interface FeaturedSliderProps {
   products: Product[]
+  combos: Combo[]
 }
 
-export default function FeaturedSlider({ products }: FeaturedSliderProps) {
+export default function FeaturedSlider({ products, combos }: FeaturedSliderProps) {
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const dragStartX = useRef(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  const total = products.length
+  // Merge featured products and combos into a single list
+  const items: SliderItem[] = [
+    ...products.map((p) => ({ type: 'product' as const, data: p })),
+    ...combos.map((c) => ({ type: 'combo' as const, data: c })),
+  ]
 
-  const next = useCallback(() => {
-    setCurrent((c) => (c + 1) % total)
-  }, [total])
+  const total = items.length
 
-  const prev = useCallback(() => {
-    setCurrent((c) => (c - 1 + total) % total)
-  }, [total])
+  const next = useCallback(() => setCurrent((c) => (c + 1) % total), [total])
+  const prev = useCallback(() => setCurrent((c) => (c - 1 + total) % total), [total])
 
-  // Autoplay
   useEffect(() => {
     if (paused || total <= 1) return
     intervalRef.current = setInterval(next, 3500)
     return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
   }, [paused, next, total])
 
-  // Touch/drag swipe
   function handleDragStart(x: number) {
     setIsDragging(true)
     dragStartX.current = x
@@ -72,69 +76,18 @@ export default function FeaturedSlider({ products }: FeaturedSliderProps) {
           onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
           onTouchEnd={(e) => handleDragEnd(e.changedTouches[0].clientX)}
         >
-          {/* Slides track */}
           <div
             className="flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${current * 100}%)` }}
           >
-            {products.map((product) => (
-              <div key={product.id} className="w-full flex-shrink-0">
-                <div className="flex flex-col sm:flex-row gap-0 rounded-2xl overflow-hidden bg-gradient-to-br from-brand-50 to-white">
-
-                  {/* Image */}
-                  <div className="relative w-full sm:w-96 h-52 sm:h-74 flex-shrink-0">
-                    {product.image_url ? (
-                      <Image
-                        src={product.image_url}
-                        alt={product.name}
-                        fill
-                        sizes="(max-width: 640px) 100vw, 256px"
-                        className="object-cover"
-                        draggable={false}
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-brand-100 flex items-center justify-center">
-                        <span className="text-5xl">🌸</span>
-                      </div>
-                    )}
-                    {/* Overlay gradient on mobile */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent sm:hidden" />
-                  </div>
-
-                  {/* Info */}
-                  <div className="flex-1 flex flex-col justify-center px-6 py-5 sm:py-8">
-                    <span className="text-xs tracking-widest uppercase text-brand-400 font-semibold mb-2 capitalize">
-                      {product.category}
-                    </span>
-                    <h3 className="font-display text-2xl sm:text-3xl font-bold text-brand-800 leading-tight mb-3">
-                      {product.name}
-                    </h3>
-                    {product.description && (
-                      <p className="text-sm text-gray-500 leading-relaxed line-clamp-3 mb-4">
-                        {product.description}
-                      </p>
-                    )}
-                    <div className="flex items-center gap-3 flex-wrap">
-                      {product.price > 0 && (
-                        <span className="font-display font-bold text-2xl text-brand-600">
-                          ${product.price.toLocaleString('es-AR')}
-                        </span>
-                      )}
-                      {product.stock === 0 ? (
-                        <span className="badge-out-of-stock">Sin stock</span>
-                      ) : product.stock <= 3 ? (
-                        <span className="badge-low-stock">Últimas {product.stock} unidades</span>
-                      ) : (
-                        <span className="badge-in-stock">En stock</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+            {items.map((item, i) =>
+              item.type === 'product'
+                ? <ProductSlide key={`p-${item.data.id}`} product={item.data} />
+                : <ComboSlide key={`c-${item.data.id}`} combo={item.data} />
+            )}
           </div>
 
-          {/* Prev / Next arrows — only if more than 1 */}
+          {/* Arrows */}
           {total > 1 && (
             <>
               <button
@@ -159,19 +112,17 @@ export default function FeaturedSlider({ products }: FeaturedSliderProps) {
           )}
         </div>
 
-        {/* Dots + pause indicator */}
+        {/* Dots + pause */}
         {total > 1 && (
           <div className="flex items-center justify-center gap-2 mt-4">
-            {products.map((_, i) => (
+            {items.map((item, i) => (
               <button
                 key={i}
                 onClick={() => { setCurrent(i); setPaused(true); setTimeout(() => setPaused(false), 4000) }}
                 className={`rounded-full transition-all duration-300 ${
-                  i === current
-                    ? 'w-6 h-2 bg-brand-500'
-                    : 'w-2 h-2 bg-brand-200 hover:bg-brand-300'
+                  i === current ? 'w-6 h-2 bg-brand-500' : 'w-2 h-2 bg-brand-200 hover:bg-brand-300'
                 }`}
-                aria-label={`Ir al producto ${i + 1}`}
+                aria-label={`Ir al slide ${i + 1}`}
               />
             ))}
             <button
@@ -180,18 +131,136 @@ export default function FeaturedSlider({ products }: FeaturedSliderProps) {
               aria-label={paused ? 'Reanudar' : 'Pausar'}
             >
               {paused ? (
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
               ) : (
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                </svg>
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" /></svg>
               )}
             </button>
           </div>
         )}
       </div>
     </section>
+  )
+}
+
+// ─── Product slide ────────────────────────────────────────
+function ProductSlide({ product }: { product: Product }) {
+  return (
+    <div className="w-full flex-shrink-0">
+      <div className="flex flex-col sm:flex-row rounded-2xl overflow-hidden bg-gradient-to-br from-brand-50 to-white">
+        <div className="relative w-full sm:w-96 h-52 sm:h-80 flex-shrink-0">
+          {product.image_url ? (
+            <Image src={product.image_url} alt={product.name} fill
+              sizes="(max-width: 640px) 100vw, 256px" className="object-cover" draggable={false} />
+          ) : (
+            <div className="w-full h-full bg-brand-100 flex items-center justify-center">
+              <span className="text-5xl">🌸</span>
+            </div>
+          )}
+        </div>
+        <div className="flex-1 flex flex-col justify-center px-6 py-5 sm:py-8">
+          <span className="text-xs tracking-widest uppercase text-brand-400 font-semibold mb-2 capitalize">
+            {product.brand ?? product.category}
+          </span>
+          <h3 className="font-display text-2xl sm:text-3xl font-bold text-brand-800 leading-tight mb-3">
+            {product.name}
+          </h3>
+          {product.description && (
+            <p className="text-sm text-gray-500 leading-relaxed line-clamp-3 mb-4">
+              {product.description}
+            </p>
+          )}
+          <div className="flex items-center gap-3 flex-wrap">
+            {product.price > 0 && (
+              <span className="font-display font-bold text-2xl text-brand-600">
+                ${product.price.toLocaleString('es-AR')}
+              </span>
+            )}
+            {product.stock === 0 ? <span className="badge-out-of-stock">Sin stock</span>
+              : product.stock <= 3 ? <span className="badge-low-stock">Últimas {product.stock} unidades</span>
+              : <span className="badge-in-stock">En stock</span>}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Combo slide ─────────────────────────────────────────
+function ComboSlide({ combo }: { combo: Combo }) {
+  const hasProducts = combo.products && combo.products.length > 0
+
+  return (
+    <div className="w-full flex-shrink-0">
+      <div className="flex flex-col sm:flex-row rounded-2xl overflow-hidden bg-gradient-to-br from-brand-100 to-brand-50">
+
+        {/* Combo image or product collage */}
+        <div className="relative w-full sm:w-3xl h-52 sm:h-80 flex-shrink-0">
+          {combo.image_url ? (
+            <Image src={combo.image_url} alt={combo.name} fill
+              sizes="(max-width: 640px) 100vw, 256px" className=" object-cover" draggable={false} />
+          ) : hasProducts ? (
+            // Collage con las fotos de los productos del combo
+            <div className={`w-full h-full grid gap-0.5 bg-brand-200 ${
+              combo.products!.length === 1 ? 'grid-cols-1' :
+              combo.products!.length === 2 ? 'grid-cols-2' :
+              combo.products!.length === 3 ? 'grid-cols-2' :
+              'grid-cols-2'
+            }`}>
+              {combo.products!.slice(0, 4).map((p, i) => (
+                <div key={p.id} className={`relative overflow-hidden ${
+                  combo.products!.length === 3 && i === 0 ? 'row-span-2' : ''
+                }`}>
+                  {p.image_url ? (
+                    <Image src={p.image_url} alt={p.name} fill
+                      sizes="128px" className="object-cover" draggable={false} />
+                  ) : (
+                    <div className="w-full h-full bg-brand-100 flex items-center justify-center">
+                      <span className="text-2xl">📦</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="w-full h-full bg-brand-100 flex items-center justify-center">
+              <span className="text-5xl">🎁</span>
+            </div>
+          )}
+
+          {/* Combo badge */}
+          <div className="absolute top-3 left-3 bg-brand-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+            🎁 Combo
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="flex-1 flex flex-col justify-center px-6 py-5 sm:py-8">
+          <span className="text-xs tracking-widest uppercase text-brand-500 font-semibold mb-2">
+            Combo especial
+          </span>
+          <h3 className="font-display text-2xl sm:text-3xl font-bold text-brand-800 leading-tight mb-3">
+            {combo.name}
+          </h3>
+          {combo.description && (
+            <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 mb-4">
+              {combo.description}
+            </p>
+          )}
+          {hasProducts && (
+            <div className="flex flex-col gap-1">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Incluye:</p>
+              <div className="flex flex-wrap gap-1.5">
+                {combo.products!.map((p) => (
+                  <span key={p.id} className="bg-white text-brand-700 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm border border-brand-100">
+                    {p.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }
