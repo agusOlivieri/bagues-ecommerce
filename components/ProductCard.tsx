@@ -36,7 +36,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
         {/* Category pill */}
         <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-brand-600 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm capitalize">
-          {product.category}
+          {product.brand ? `🔓 ${product.brand}` : product.category}
         </span>
       </div>
 
@@ -52,7 +52,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
         <div className="mt-1 flex items-center justify-between">
           <StockBadge stock={product.stock} />
-          <span className="text-xs text-gray-400 font-medium">{product.stock} u.</span>
+          {product.price > 0 && (
+            <span className="text-brand-600 font-bold font-display text-lg">
+              ${product.price.toLocaleString('es-AR')}
+            </span>
+          )}
         </div>
       </div>
     </div>
