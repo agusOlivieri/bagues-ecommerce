@@ -114,7 +114,12 @@ export default function FeaturedSlider({ products }: FeaturedSliderProps) {
                         {product.description}
                       </p>
                     )}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3 flex-wrap">
+                      {product.price > 0 && (
+                        <span className="font-display font-bold text-2xl text-brand-600">
+                          ${product.price.toLocaleString('es-AR')}
+                        </span>
+                      )}
                       {product.stock === 0 ? (
                         <span className="badge-out-of-stock">Sin stock</span>
                       ) : product.stock <= 3 ? (

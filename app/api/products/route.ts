@@ -31,12 +31,12 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
   const body = await req.json()
-  const { name, description, category, stock, image_url, featured } = body
+  const { name, description, category, stock, price, image_url, featured } = body
 
   const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('products')
-    .insert([{ name, description, category, stock, image_url, featured }])
+    .insert([{ name, description, category, stock, price, image_url, featured }])
     .select()
     .single()
 
@@ -50,12 +50,12 @@ export async function PUT(req: NextRequest) {
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
   const body = await req.json()
-  const { id, name, description, category, stock, image_url, featured } = body
+  const { id, name, description, category, stock, price, image_url, featured } = body
 
   const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('products')
-    .update({ name, description, category, stock, image_url, featured })
+    .update({ name, description, category, stock, price, image_url, featured })
     .eq('id', id)
     .select()
     .single()

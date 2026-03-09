@@ -12,6 +12,7 @@ const emptyForm = {
   description: '',
   category: 'perfume',
   stock: 0,
+  price: 0,
   image_url: '',
   featured: false,
 }
@@ -84,6 +85,7 @@ export default function AdminPage() {
       description: product.description ?? '',
       category: product.category,
       stock: product.stock,
+      price: product.price ?? 0,
       image_url: product.image_url ?? '',
       featured: product.featured ?? false,
     })
@@ -222,6 +224,23 @@ export default function AdminPage() {
                 />
               </div>
 
+              {/* Price */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-600 mb-1">Precio *</label>
+                <div className="relative">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">$</span>
+                  <input
+                    type="number"
+                    min={0}
+                    step={0.01}
+                    className="input-field pl-7"
+                    placeholder="0.00"
+                    value={form.price}
+                    onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+                  />
+                </div>
+              </div>
+
               {/* Image */}
               <div className="sm:col-span-2">
                 <label className="block text-sm font-semibold text-gray-600 mb-1">Imagen</label>
@@ -260,7 +279,7 @@ export default function AdminPage() {
                   onChange={handleImageUpload}
                 />
               </div>
-              
+
               {/* Featured toggle */}
               <div className="sm:col-span-2">
                 <button

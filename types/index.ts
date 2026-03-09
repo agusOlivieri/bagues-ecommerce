@@ -4,6 +4,7 @@ export interface Product {
   description: string | null
   category: string
   stock: number
+  price: number
   image_url: string | null
   featured: boolean
   created_at: string
