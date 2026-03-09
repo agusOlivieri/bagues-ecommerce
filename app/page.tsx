@@ -55,7 +55,7 @@ export default function CatalogPage() {
       </section>
 
       {/* Filters */}
-      <section className="sticky top-16 z-40 bg-white/90 backdrop-blur-md border-b border-brand-100 shadow-sm">
+      <section className="sticky top-20 z-40 bg-white/90 backdrop-blur-md border-b border-brand-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row gap-3">
           {/* Search */}
           <div className="relative flex-1">
