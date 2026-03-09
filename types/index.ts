@@ -10,7 +10,7 @@ export interface Product {
 
 export const CATEGORIES = [
   { value: 'perfume', label: 'Perfumes', emoji: '🌸' },
-  { value: 'aroma', label: 'Aromas', emoji: '🕯️' },
+  { value: 'aroma', label: 'Aromas', emoji: '🌹' },
   { value: 'crema', label: 'Cremas', emoji: '🧴' },
   { value: 'shampoo', label: 'Shampoos', emoji: '🚿' },
   { value: 'acondicionador', label: 'Acondicionadores', emoji: '✨' },
