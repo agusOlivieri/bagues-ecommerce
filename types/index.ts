@@ -5,6 +5,7 @@ export interface Product {
   category: string
   stock: number
   image_url: string | null
+  featured: boolean
   created_at: string
 }
 

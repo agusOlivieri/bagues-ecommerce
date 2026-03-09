@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Navbar from '@/components/Navbar'
 import ProductCard from '@/components/ProductCard'
+import FeaturedSlider from '@/components/FeaturedSlider'
 import { Product, CATEGORIES } from '@/types'
 
 export default function CatalogPage() {
@@ -33,6 +34,8 @@ export default function CatalogPage() {
     return matchesSearch && matchesCategory
   })
 
+  const featuredProducts = products.filter((p) => p.featured)
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -54,8 +57,13 @@ export default function CatalogPage() {
         </div>
       </section>
 
+      {/* Featured Slider */}
+      {featuredProducts.length > 0 && (
+        <FeaturedSlider products={featuredProducts} />
+      )}
+
       {/* Filters */}
-      <section className="sticky top-20 z-40 bg-white/90 backdrop-blur-md border-b border-brand-100 shadow-sm">
+      <section className="sticky top-16 z-40 bg-white/90 backdrop-blur-md border-b border-brand-100 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row gap-3">
           {/* Search */}
           <div className="relative flex-1">

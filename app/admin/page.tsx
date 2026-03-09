@@ -13,6 +13,7 @@ const emptyForm = {
   category: 'perfume',
   stock: 0,
   image_url: '',
+  featured: false,
 }
 
 export default function AdminPage() {
@@ -84,6 +85,7 @@ export default function AdminPage() {
       category: product.category,
       stock: product.stock,
       image_url: product.image_url ?? '',
+      featured: product.featured ?? false,
     })
     setEditing(product.id)
     setShowForm(true)
@@ -257,6 +259,30 @@ export default function AdminPage() {
                   className="hidden"
                   onChange={handleImageUpload}
                 />
+              </div>
+              
+              {/* Featured toggle */}
+              <div className="sm:col-span-2">
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, featured: !form.featured })}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
+                    form.featured
+                      ? 'border-brand-500 bg-brand-50 text-brand-700'
+                      : 'border-gray-200 bg-white text-gray-500'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">{form.featured ? '⭐' : '☆'}</span>
+                    <div className="text-left">
+                      <p className="text-sm font-semibold leading-none">Producto destacado</p>
+                      <p className="text-xs mt-0.5 opacity-70">Aparece en el slider de la página principal</p>
+                    </div>
+                  </div>
+                  <div className={`relative w-11 h-6 rounded-full transition-colors duration-200 flex-shrink-0 ${form.featured ? 'bg-brand-500' : 'bg-gray-200'}`}>
+                    <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${form.featured ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                  </div>
+                </button>
               </div>
             </div>
 
