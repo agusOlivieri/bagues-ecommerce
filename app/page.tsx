@@ -49,7 +49,7 @@ export default function CatalogPage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-pink-mesh py-14 px-4 text-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-100 via-brand-50 to-white opacity-80" />
+        <div className="absolute inset-0 bg-linear-to-br from-brand-100 via-brand-50 to-white opacity-80" />
         <div className="relative max-w-2xl mx-auto">
           <p className="text-brand-500 font-semibold text-sm tracking-widest uppercase mb-2">
             Tienda Online

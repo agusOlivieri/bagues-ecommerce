@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { Product } from '@/types'
+import OrderButton from './OrderButton'
 
 interface ProductCardProps {
   product: Product
@@ -46,7 +47,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {product.name}
         </h3>
         {product.description && (
-          <p className="text-sm text-gray-500 leading-relaxed line-clamp-2">
+          <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 h-12">
             {product.description}
           </p>
         )}
@@ -58,6 +59,9 @@ export default function ProductCard({ product }: ProductCardProps) {
             </span>
           )}
         </div>
+        
+        <OrderButton product={product} />
+
       </div>
     </div>
   )
