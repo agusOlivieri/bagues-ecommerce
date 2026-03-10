@@ -31,11 +31,11 @@ export default function FeaturedSlider({ products, combos }: FeaturedSliderProps
   const next = useCallback(() => setCurrent((c) => (c + 1) % total), [total])
   const prev = useCallback(() => setCurrent((c) => (c - 1 + total) % total), [total])
 
-  useEffect(() => {
-    if (paused || total <= 1) return
-    intervalRef.current = setInterval(next, 3500)
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
-  }, [paused, next, total])
+  // useEffect(() => {
+  //   if (paused || total <= 1) return
+  //   intervalRef.current = setInterval(next, 3500)
+  //   return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+  // }, [paused, next, total])
 
   function handleDragStart(x: number) {
     setIsDragging(true)
@@ -55,7 +55,7 @@ export default function FeaturedSlider({ products, combos }: FeaturedSliderProps
 
   return (
     <section className="w-full bg-white border-b border-brand-100">
-      <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6">
+      <div className="max-w-6xl mx-auto sm:px-8 py-6">
 
         {/* Section header */}
         <div className="flex items-center gap-3 mb-5">
@@ -68,7 +68,7 @@ export default function FeaturedSlider({ products, combos }: FeaturedSliderProps
 
         {/* Slider */}
         <div
-          className="relative overflow-hidden rounded-2xl cursor-grab active:cursor-grabbing select-none"
+          className="relative overflow-hidden sm:rounded-2xl cursor-grab active:cursor-grabbing select-none"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => { setPaused(false); setIsDragging(false) }}
           onMouseDown={(e) => handleDragStart(e.clientX)}
@@ -147,7 +147,7 @@ export default function FeaturedSlider({ products, combos }: FeaturedSliderProps
 function ProductSlide({ product }: { product: Product }) {
   return (
     <div className="w-full flex-shrink-0">
-      <div className="flex flex-col sm:flex-row rounded-2xl overflow-hidden bg-gradient-to-br from-brand-50 to-white">
+      <div className="flex flex-col sm:flex-row sm:rounded-2xl overflow-hidden bg-gradient-to-br from-brand-50 to-white">
         <div className="relative w-full sm:w-96 h-52 sm:h-80 flex-shrink-0">
           {product.image_url ? (
             <Image src={product.image_url} alt={product.name} fill
@@ -158,21 +158,21 @@ function ProductSlide({ product }: { product: Product }) {
             </div>
           )}
         </div>
-        <div className="flex-1 flex flex-col justify-center px-6 py-5 sm:py-8">
-          <span className="text-xs tracking-widest uppercase text-brand-400 font-semibold mb-2 capitalize">
+        <div className="flex-1 flex flex-col justify-center px-6 py-4 sm:py-8">
+          <span className="text-xs tracking-widest uppercase text-brand-400 font-semibold capitalize">
             {product.brand ?? product.category}
           </span>
-          <h3 className="font-display text-2xl sm:text-3xl font-bold text-brand-800 leading-tight mb-3">
+          <h3 className="font-display text-2xl sm:text-3xl font-bold text-brand-800 leading-tight mb-1">
             {product.name}
           </h3>
           {product.description && (
-            <p className="text-sm text-gray-500 leading-relaxed line-clamp-3 mb-4">
+            <p className="text-sm text-gray-500 leading-relaxed line-clamp-3 mb-1">
               {product.description}
             </p>
           )}
           <div className="flex items-center gap-3 flex-wrap">
             {product.price > 0 && (
-              <span className="font-display font-bold text-2xl text-brand-600">
+              <span className="font-display font-bold text-xl sm:text-2xl text-brand-600">
                 ${product.price.toLocaleString('es-AR')}
               </span>
             )}
@@ -192,7 +192,7 @@ function ComboSlide({ combo }: { combo: Combo }) {
 
   return (
     <div className="w-full flex-shrink-0">
-      <div className="flex flex-col sm:flex-row rounded-2xl overflow-hidden bg-gradient-to-br from-brand-100 to-brand-50">
+      <div className="flex flex-col sm:flex-row sm:rounded-2xl overflow-hidden bg-gradient-to-br from-brand-100 to-brand-50">
 
         {/* Combo image or product collage */}
         <div className="relative w-full sm:w-3xl h-52 sm:h-80 flex-shrink-0">
@@ -227,23 +227,18 @@ function ComboSlide({ combo }: { combo: Combo }) {
               <span className="text-5xl">🎁</span>
             </div>
           )}
-
-          {/* Combo badge */}
-          <div className="absolute top-3 left-3 bg-brand-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
-            🎁 Combo
-          </div>
         </div>
 
         {/* Info */}
-        <div className="flex-1 flex flex-col justify-center px-6 py-5 sm:py-8">
+        <div className="flex-1 flex flex-col justify-center px-6 py-4 sm:py-8">
           <span className="text-xs tracking-widest uppercase text-brand-500 font-semibold mb-2">
             Combo especial
           </span>
-          <h3 className="font-display text-2xl sm:text-3xl font-bold text-brand-800 leading-tight mb-3">
+          <h3 className="font-display text-2xl sm:text-3xl font-bold text-brand-800 leading-tight mb-1">
             {combo.name}
           </h3>
           {combo.description && (
-            <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 mb-4">
+            <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 mb-1">
               {combo.description}
             </p>
           )}
