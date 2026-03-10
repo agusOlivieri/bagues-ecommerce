@@ -211,7 +211,7 @@ export default function AdminPage() {
   if (!session) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-6 px-4">
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center shadow-lg">
+        <div className="w-16 h-16 rounded-full bg-linear-to-br from-brand-400 to-brand-600 flex items-center justify-center shadow-lg">
           <span className="text-white font-bold text-xl">GV</span>
         </div>
         <h1 className="font-display text-2xl font-bold text-brand-700">Panel Administrador</h1>
@@ -369,7 +369,7 @@ export default function AdminPage() {
                           <p className="text-xs mt-0.5 opacity-70">Aparece en el slider de la página principal</p>
                         </div>
                       </div>
-                      <div className={`relative w-11 h-6 rounded-full transition-colors duration-200 flex-shrink-0 ${productForm.featured ? 'bg-brand-500' : 'bg-gray-200'}`}>
+                      <div className={`relative w-11 h-6 rounded-full transition-colors duration-200 shrink-0 ${productForm.featured ? 'bg-brand-500' : 'bg-gray-200'}`}>
                         <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${productForm.featured ? 'translate-x-5' : 'translate-x-0.5'}`} />
                       </div>
                     </button>
@@ -388,7 +388,7 @@ export default function AdminPage() {
               <div className="space-y-3">
                 {[1,2,3].map((i) => (
                   <div key={i} className="card p-4 animate-pulse flex gap-4">
-                    <div className="w-16 h-16 bg-brand-100 rounded-xl flex-shrink-0" />
+                    <div className="w-16 h-16 bg-brand-100 rounded-xl shrink-0" />
                     <div className="flex-1 space-y-2">
                       <div className="h-4 bg-brand-100 rounded-full w-1/2" />
                       <div className="h-3 bg-brand-50 rounded-full w-3/4" />
@@ -405,7 +405,7 @@ export default function AdminPage() {
               <div className="space-y-3">
                 {products.map((product) => (
                   <div key={product.id} className="card p-4 flex gap-4 items-center">
-                    <div className="w-16 h-16 rounded-xl bg-brand-50 flex-shrink-0 overflow-hidden">
+                    <div className="w-16 h-16 rounded-xl bg-brand-50 shrink-0 overflow-hidden">
                       {product.image_url
                         ? <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
                         : <div className="w-full h-full flex items-center justify-center"><span className="text-2xl">📦</span></div>}
@@ -423,7 +423,7 @@ export default function AdminPage() {
                         {product.featured && <span className="text-xs">⭐</span>}
                       </div>
                     </div>
-                    <div className="flex gap-2 flex-shrink-0">
+                    <div className="flex gap-2 shrink-0">
                       <button onClick={() => startEditProduct(product)} className="p-2 rounded-xl text-brand-500 hover:bg-brand-50 transition-colors">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -503,7 +503,7 @@ export default function AdminPage() {
                           <button key={p.id} type="button" onClick={() => toggleProductInCombo(p.id)}
                             className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 transition-all text-left ${
                               selected ? 'border-brand-500 bg-brand-50' : 'border-gray-100 hover:border-brand-200'}`}>
-                            <div className="w-10 h-10 rounded-lg bg-brand-100 flex-shrink-0 overflow-hidden">
+                            <div className="w-10 h-10 rounded-lg bg-brand-100 shrink-0 overflow-hidden">
                               {p.image_url
                                 ? <img src={p.image_url} alt={p.name} className="w-full h-full object-cover" />
                                 : <div className="w-full h-full flex items-center justify-center text-lg">📦</div>}
@@ -512,7 +512,7 @@ export default function AdminPage() {
                               <p className="text-sm font-semibold text-gray-700 truncate">{p.name}</p>
                               <p className="text-xs text-gray-400 capitalize">{p.category}</p>
                             </div>
-                            <div className={`w-5 h-5 rounded-full flex-shrink-0 border-2 flex items-center justify-center ${
+                            <div className={`w-5 h-5 rounded-full shrink-0 border-2 flex items-center justify-center ${
                               selected ? 'bg-brand-500 border-brand-500' : 'border-gray-300'}`}>
                               {selected && (
                                 <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -535,7 +535,7 @@ export default function AdminPage() {
                         <p className="text-xs mt-0.5 opacity-70">Aparece en el slider de la página principal</p>
                       </div>
                     </div>
-                    <div className={`relative w-11 h-6 rounded-full transition-colors duration-200 flex-shrink-0 ${comboForm.featured ? 'bg-brand-500' : 'bg-gray-200'}`}>
+                    <div className={`relative w-11 h-6 rounded-full transition-colors duration-200 shrink-0 ${comboForm.featured ? 'bg-brand-500' : 'bg-gray-200'}`}>
                       <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${comboForm.featured ? 'translate-x-5' : 'translate-x-0.5'}`} />
                     </div>
                   </button>
@@ -553,7 +553,7 @@ export default function AdminPage() {
               <div className="space-y-3">
                 {[1,2].map((i) => (
                   <div key={i} className="card p-4 animate-pulse flex gap-4">
-                    <div className="w-16 h-16 bg-brand-100 rounded-xl flex-shrink-0" />
+                    <div className="w-16 h-16 bg-brand-100 rounded-xl shrink-0" />
                     <div className="flex-1 space-y-2">
                       <div className="h-4 bg-brand-100 rounded-full w-1/2" />
                       <div className="h-3 bg-brand-50 rounded-full w-3/4" />
@@ -570,7 +570,7 @@ export default function AdminPage() {
               <div className="space-y-3">
                 {combos.map((combo) => (
                   <div key={combo.id} className="card p-4 flex gap-4 items-center">
-                    <div className="w-16 h-16 rounded-xl bg-brand-50 flex-shrink-0 overflow-hidden">
+                    <div className="w-16 h-16 rounded-xl bg-brand-50 shrink-0 overflow-hidden">
                       {combo.image_url
                         ? <img src={combo.image_url} alt={combo.name} className="w-full h-full object-cover" />
                         : <div className="w-full h-full flex items-center justify-center"><span className="text-2xl">🎁</span></div>}
@@ -586,7 +586,7 @@ export default function AdminPage() {
                           : 'Sin productos asignados'}
                       </p>
                     </div>
-                    <div className="flex gap-2 flex-shrink-0">
+                    <div className="flex gap-2 shrink-0">
                       <button onClick={() => startEditCombo(combo)} className="p-2 rounded-xl text-brand-500 hover:bg-brand-50 transition-colors">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
