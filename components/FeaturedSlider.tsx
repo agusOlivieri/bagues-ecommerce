@@ -148,7 +148,7 @@ function ProductSlide({ product }: { product: Product }) {
   return (
     <div className="w-full flex-shrink-0">
       <div className="flex flex-col sm:flex-row sm:rounded-2xl overflow-hidden bg-gradient-to-br from-brand-50 to-white">
-        <div className="relative w-full sm:w-96 h-52 sm:h-80 flex-shrink-0">
+        <div className="relative w-full sm:w-96 h-68 sm:h-80 flex-shrink-0">
           {product.image_url ? (
             <Image src={product.image_url} alt={product.name} fill
               sizes="(max-width: 640px) 100vw, 768px" className="object-cover" draggable={false} />
@@ -195,7 +195,7 @@ function ComboSlide({ combo }: { combo: Combo }) {
       <div className="flex flex-col sm:flex-row sm:rounded-2xl overflow-hidden bg-gradient-to-br from-brand-100 to-brand-50">
 
         {/* Combo image or product collage */}
-        <div className="relative w-full sm:w-3xl h-52 sm:h-80 flex-shrink-0">
+        <div className="relative w-full sm:w-3xl h-68 sm:h-80 flex-shrink-0">
           {combo.image_url ? (
             <Image src={combo.image_url} alt={combo.name} fill
               sizes="(max-width: 640px) 100vw, 1536px" className=" object-cover" draggable={false} />
