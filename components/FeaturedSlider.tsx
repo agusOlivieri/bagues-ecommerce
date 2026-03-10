@@ -151,7 +151,7 @@ function ProductSlide({ product }: { product: Product }) {
         <div className="relative w-full sm:w-96 h-52 sm:h-80 flex-shrink-0">
           {product.image_url ? (
             <Image src={product.image_url} alt={product.name} fill
-              sizes="(max-width: 640px) 100vw, 256px" className="object-cover" draggable={false} />
+              sizes="(max-width: 640px) 100vw, 768px" className="object-cover" draggable={false} />
           ) : (
             <div className="w-full h-full bg-brand-100 flex items-center justify-center">
               <span className="text-5xl">🌸</span>
@@ -198,7 +198,7 @@ function ComboSlide({ combo }: { combo: Combo }) {
         <div className="relative w-full sm:w-3xl h-52 sm:h-80 flex-shrink-0">
           {combo.image_url ? (
             <Image src={combo.image_url} alt={combo.name} fill
-              sizes="(max-width: 640px) 100vw, 256px" className=" object-cover" draggable={false} />
+              sizes="(max-width: 640px) 100vw, 1536px" className=" object-cover" draggable={false} />
           ) : hasProducts ? (
             // Collage con las fotos de los productos del combo
             <div className={`w-full h-full grid gap-0.5 bg-brand-200 ${
