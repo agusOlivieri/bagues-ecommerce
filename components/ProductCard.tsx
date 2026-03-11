@@ -7,9 +7,9 @@ interface ProductCardProps {
 }
 
 function StockBadge({ stock }: { stock: number }) {
-  if (stock === 0) return <span className="badge-out-of-stock">Sin stock</span>
-  if (stock <= 3) return <span className="badge-low-stock">Últimas {stock} unidades</span>
-  return <span className="badge-in-stock">En stock</span>
+  if (stock === 0) return <span className="badge-out-of-stock text-center">Sin stock</span>
+  if (stock <= 3) return <span className="badge-low-stock text-center">Últimas {stock} unidades</span>
+  return <span className="badge-in-stock text-center">En stock</span>
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
@@ -51,8 +51,8 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.description}
           </p>
         )}
-        <div className="mt-1 flex items-center justify-between">
-          <StockBadge stock={product.stock} />
+        <StockBadge stock={product.stock} />
+        <div className="flex items-center justify-between">
           {product.price > 0 && (
             <span className="text-brand-600 font-bold font-display text-lg">
               ${product.price.toLocaleString('es-AR')}

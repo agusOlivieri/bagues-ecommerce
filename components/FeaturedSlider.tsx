@@ -31,11 +31,11 @@ export default function FeaturedSlider({ products, combos }: FeaturedSliderProps
   const next = useCallback(() => setCurrent((c) => (c + 1) % total), [total])
   const prev = useCallback(() => setCurrent((c) => (c - 1 + total) % total), [total])
 
-  useEffect(() => {
-    if (paused || total <= 1) return
-    intervalRef.current = setInterval(next, 3500)
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
-  }, [paused, next, total])
+  // useEffect(() => {
+  //   if (paused || total <= 1) return
+  //   intervalRef.current = setInterval(next, 3500)
+  //   return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+  // }, [paused, next, total])
 
   function handleDragStart(x: number) {
     setIsDragging(true)
@@ -68,7 +68,7 @@ export default function FeaturedSlider({ products, combos }: FeaturedSliderProps
 
         {/* Slider */}
         <div
-          className="relative overflow-hidden sm:rounded-2xl cursor-grab active:cursor-grabbing select-none"
+          className="relative border-4 overflow-hidden sm:rounded-2xl cursor-grab active:cursor-grabbing select-none"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => { setPaused(false); setIsDragging(false) }}
           onMouseDown={(e) => handleDragStart(e.clientX)}
@@ -147,7 +147,7 @@ export default function FeaturedSlider({ products, combos }: FeaturedSliderProps
 function ProductSlide({ product }: { product: Product }) {
   return (
     <div className="w-full shrink-0">
-      <div className="flex flex-col sm:flex-row sm:rounded-2xl overflow-hidden bg-linear-to-br from-brand-50 to-white">
+      <div className="flex flex-col h-full sm:flex-row sm:rounded-2xl overflow-hidden bg-linear-to-br from-brand-50 to-white">
         <div className="relative w-full sm:w-96 h-68 sm:h-80 shrink-0">
           {product.image_url ? (
             <Image src={product.image_url} alt={product.name} fill
@@ -166,7 +166,7 @@ function ProductSlide({ product }: { product: Product }) {
             {product.name}
           </h3>
           {product.description && (
-            <p className="text-sm text-gray-500 leading-relaxed line-clamp-3 mb-1">
+            <p className="text-sm h-12 text-gray-500 leading-relaxed line-clamp-3 mb-1">
               {product.description}
             </p>
           )}
