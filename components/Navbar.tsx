@@ -12,7 +12,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50">
       {/* Thin top accent bar */}
-      <div className="h-0.5 bg-gradient-to-r from-brand-300 via-brand-500 to-brand-300" />
+      <div className="h-0.5 bg-linear-to-r from-brand-300 via-brand-500 to-brand-300" />
 
       <div className="bg-white/90 backdrop-blur-md border-b border-brand-100/60">
         <div className="max-w-6xl mx-auto px-5 sm:px-8">

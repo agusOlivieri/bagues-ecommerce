@@ -147,7 +147,7 @@ export default function FeaturedSlider({ products, combos }: FeaturedSliderProps
 function ProductSlide({ product }: { product: Product }) {
   return (
     <div className="w-full shrink-0">
-      <div className="flex flex-col sm:flex-row sm:rounded-2xl overflow-hidden bg-linear-to-br from-brand-50 to-white">
+      <div className="flex flex-col h-full sm:flex-row sm:rounded-2xl overflow-hidden bg-linear-to-br from-brand-50 to-white">
         <div className="relative w-full sm:w-96 h-68 sm:h-80 shrink-0">
           {product.image_url ? (
             <Image src={product.image_url} alt={product.name} fill
@@ -166,7 +166,7 @@ function ProductSlide({ product }: { product: Product }) {
             {product.name}
           </h3>
           {product.description && (
-            <p className="text-sm text-gray-500 leading-relaxed line-clamp-3 mb-1">
+            <p className="text-sm h-12 text-gray-500 leading-relaxed line-clamp-3 mb-1">
               {product.description}
             </p>
           )}
