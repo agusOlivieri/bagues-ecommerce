@@ -31,11 +31,11 @@ export default function FeaturedSlider({ products, combos }: FeaturedSliderProps
   const next = useCallback(() => setCurrent((c) => (c + 1) % total), [total])
   const prev = useCallback(() => setCurrent((c) => (c - 1 + total) % total), [total])
 
-  // useEffect(() => {
-  //   if (paused || total <= 1) return
-  //   intervalRef.current = setInterval(next, 3500)
-  //   return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
-  // }, [paused, next, total])
+  useEffect(() => {
+    if (paused || total <= 1) return
+    intervalRef.current = setInterval(next, 3500)
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+  }, [paused, next, total])
 
   function handleDragStart(x: number) {
     setIsDragging(true)
@@ -68,7 +68,7 @@ export default function FeaturedSlider({ products, combos }: FeaturedSliderProps
 
         {/* Slider */}
         <div
-          className="relative border-4 overflow-hidden sm:rounded-2xl cursor-grab active:cursor-grabbing select-none"
+          className="relative overflow-hidden sm:rounded-2xl cursor-grab active:cursor-grabbing select-none"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => { setPaused(false); setIsDragging(false) }}
           onMouseDown={(e) => handleDragStart(e.clientX)}
