@@ -31,5 +31,6 @@ export const CATEGORIES = [
 ]
 
 export const PERFUME_BRANDS = [
-  { value: 'Unlock', label: 'Unlock' },
+  { value: 'Unlock', label: '🔓 Unlock' },
+  { value: null, label: 'Otros' },
 ]

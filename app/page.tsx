@@ -136,7 +136,7 @@ export default function CatalogPage() {
                       : 'bg-brand-100 text-brand-700 hover:bg-brand-200'
                   }`}
                 >
-                  🔓 {b.label}
+                  {b.label}
                 </button>
               ))}
             </div>
