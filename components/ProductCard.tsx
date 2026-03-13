@@ -130,7 +130,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               {product.description}
             </p>
           )}
-          <div className="mt-1 flex items-center justify-between">
+          <div className="mt-1 flex flex-col sm:flex-row items-center justify-between">
             <StockBadge stock={product.stock} />
             {product.price > 0 && (
               <span className="text-brand-600 font-bold font-display text-lg">
