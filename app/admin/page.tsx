@@ -5,13 +5,24 @@ import { useSession, signIn } from 'next-auth/react'
 import Navbar from '@/components/Navbar'
 import { Product, Combo, CATEGORIES, PERFUME_BRANDS } from '@/types'
 
+type ProductFormData = {
+  name: string
+  description: string
+  category: string
+  brand: string | null
+  stock: number
+  price: number
+  image_url: string
+  featured: boolean
+}
+
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? ''
 
-const emptyProductForm = {
+const emptyProductForm: ProductFormData = {
   name: '',
   description: '',
   category: 'perfume',
-  brand: '',
+  brand: null,
   stock: 0,
   price: 0,
   image_url: '',
@@ -33,7 +44,7 @@ export default function AdminPage() {
   // Products state
   const [products, setProducts] = useState<Product[]>([])
   const [loadingProducts, setLoadingProducts] = useState(true)
-  const [productForm, setProductForm] = useState(emptyProductForm)
+  const [productForm, setProductForm] = useState<ProductFormData>(emptyProductForm)
   const [editingProduct, setEditingProduct] = useState<string | null>(null)
   const [showProductForm, setShowProductForm] = useState(false)
   const [deleteProductConfirm, setDeleteProductConfirm] = useState<string | null>(null)
@@ -110,7 +121,7 @@ export default function AdminPage() {
       name: p.name,
       description: p.description ?? '',
       category: p.category,
-      brand: p.brand ?? '',
+      brand: p.brand ?? null,
       stock: p.stock,
       price: p.price ?? 0,
       image_url: p.image_url ?? '',
@@ -304,7 +315,7 @@ export default function AdminPage() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-600 mb-1">Categoría *</label>
                     <select className="input-field" value={productForm.category}
-                      onChange={(e) => setProductForm({ ...productForm, category: e.target.value, brand: '' })}>
+                      onChange={(e) => setProductForm({ ...productForm, category: e.target.value, brand: null })}>
                       {CATEGORIES.map((cat) => (
                         <option key={cat.value} value={cat.value}>{cat.emoji} {cat.label}</option>
                       ))}
@@ -313,11 +324,10 @@ export default function AdminPage() {
                   {productForm.category === 'perfume' && (
                     <div>
                       <label className="block text-sm font-semibold text-gray-600 mb-1">Marca</label>
-                      <select className="input-field" value={productForm.brand}
-                        onChange={(e) => setProductForm({ ...productForm, brand: e.target.value })}>
-                        <option value="">Sin marca específica</option>
+                      <select className="input-field" value={productForm.brand || ''}
+                        onChange={(e) => setProductForm({ ...productForm, brand: e.target.value === '' ? null : e.target.value })}>
                         {PERFUME_BRANDS.map((b) => (
-                          <option key={b.value} value={b.value}>{b.label}</option>
+                          <option key={b.value} value={b.value || ''}>{b.label}</option>
                         ))}
                       </select>
                     </div>
