@@ -12,7 +12,7 @@ export default function CatalogPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [selectedBrand, setSelectedBrand] = useState<string>('all')
+  const [selectedBrand, setSelectedBrand] = useState<string | null>('all')
 
   useEffect(() => {
     fetchProducts()
