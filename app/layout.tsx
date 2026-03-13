@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Playfair_Display, DM_Sans } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
+import { Analytics } from "@vercel/analytics/next"
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -30,6 +31,7 @@ export default function RootLayout({
       <body className="font-body bg-brand-50 text-gray-800 min-h-screen">
         <Providers>{children}</Providers>
       </body>
+      <Analytics />
     </html>
   )
 }
