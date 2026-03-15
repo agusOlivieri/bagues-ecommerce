@@ -195,7 +195,7 @@ function ComboSlide({ combo }: { combo: Combo }) {
       <div className="flex flex-col sm:flex-row sm:rounded-2xl overflow-hidden bg-linear-to-br from-brand-100 to-brand-50">
 
         {/* Combo image or product collage */}
-        <div className="relative w-full sm:w-3xl h-68 sm:h-80 shrink-0">
+        <div className="relative w-full sm:w-2xl h-68 sm:h-80 shrink-0">
           {combo.image_url ? (
             <Image src={combo.image_url} alt={combo.name} fill
               sizes="(max-width: 640px) 100vw, 1536px" className=" object-cover" draggable={false} />
@@ -227,6 +227,11 @@ function ComboSlide({ combo }: { combo: Combo }) {
               <span className="text-5xl">🎁</span>
             </div>
           )}
+
+          {/* Combo badge */}
+          <div className="absolute top-3 left-3 bg-brand-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+            🎁 Combo
+          </div>
         </div>
 
         {/* Info */}
@@ -242,10 +247,15 @@ function ComboSlide({ combo }: { combo: Combo }) {
               {combo.description}
             </p>
           )}
+          {combo.price > 0 && (
+            <span className="font-display font-bold text-xl sm:text-2xl text-brand-600 mb-3">
+              ${combo.price.toLocaleString('es-AR')}
+            </span>
+          )}
           {hasProducts && (
             <div className="flex flex-col gap-1">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Incluye:</p>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex gap-1.5">
                 {combo.products!.map((p) => (
                   <span key={p.id} className="bg-white text-brand-700 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm border border-brand-100">
                     {p.name}
