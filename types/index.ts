@@ -17,6 +17,7 @@ export interface Combo {
   description: string | null
   image_url: string | null
   featured: boolean
+  price: number
   created_at: string
   products?: Product[]
 }
