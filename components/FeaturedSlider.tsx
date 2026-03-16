@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import { Product, Combo } from '@/types'
+import ProductModal from '@/components/ProductModal'
 
 type SliderItem =
   | { type: 'product'; data: Product }
@@ -140,6 +141,7 @@ export default function FeaturedSlider({ products, combos }: FeaturedSliderProps
         )}
       </div>
     </section>
+    
   )
 }
 
@@ -189,73 +191,94 @@ function ProductSlide({ product }: { product: Product }) {
 // ─── Combo slide ─────────────────────────────────────────
 function ComboSlide({ combo }: { combo: Combo }) {
   const hasProducts = combo.products && combo.products.length > 0
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="w-full shrink-0">
-      <div className="flex flex-col sm:flex-row sm:rounded-2xl overflow-hidden bg-linear-to-br from-brand-100 to-brand-50">
+    <>
+      <div 
+        className="w-full shrink-0"
+        onClick={() => setIsOpen(true)}
+      >
+        <div className="flex flex-col sm:flex-row sm:rounded-2xl overflow-hidden bg-linear-to-br from-brand-100 to-brand-50">
 
-        {/* Combo image or product collage */}
-        <div className="relative w-full sm:w-3xl h-68 sm:h-80 shrink-0">
-          {combo.image_url ? (
-            <Image src={combo.image_url} alt={combo.name} fill
-              sizes="(max-width: 640px) 100vw, 1536px" className=" object-cover" draggable={false} />
-          ) : hasProducts ? (
-            // Collage con las fotos de los productos del combo
-            <div className={`w-full h-full grid gap-0.5 bg-brand-200 ${
-              combo.products!.length === 1 ? 'grid-cols-1' :
-              combo.products!.length === 2 ? 'grid-cols-2' :
-              combo.products!.length === 3 ? 'grid-cols-2' :
-              'grid-cols-2'
-            }`}>
-              {combo.products!.slice(0, 4).map((p, i) => (
-                <div key={p.id} className={`relative overflow-hidden ${
-                  combo.products!.length === 3 && i === 0 ? 'row-span-2' : ''
-                }`}>
-                  {p.image_url ? (
-                    <Image src={p.image_url} alt={p.name} fill
-                      sizes="128px" className="object-cover" draggable={false} />
-                  ) : (
-                    <div className="w-full h-full bg-brand-100 flex items-center justify-center">
-                      <span className="text-2xl">📦</span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="w-full h-full bg-brand-100 flex items-center justify-center">
-              <span className="text-5xl">🎁</span>
-            </div>
-          )}
-        </div>
-
-        {/* Info */}
-        <div className="flex-1 flex flex-col justify-center px-6 py-4 sm:py-8">
-          <span className="text-xs tracking-widest uppercase text-brand-500 font-semibold mb-2">
-            Combo especial
-          </span>
-          <h3 className="font-display text-2xl sm:text-3xl font-bold text-brand-800 leading-tight mb-1">
-            {combo.name}
-          </h3>
-          {combo.description && (
-            <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 mb-1">
-              {combo.description}
-            </p>
-          )}
-          {hasProducts && (
-            <div className="flex flex-col gap-1">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Incluye:</p>
-              <div className="flex flex-wrap gap-1.5">
-                {combo.products!.map((p) => (
-                  <span key={p.id} className="bg-white text-brand-700 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm border border-brand-100">
-                    {p.name}
-                  </span>
+          {/* Combo image or product collage */}
+          <div className="relative w-full sm:w-2xl h-68 sm:h-80 shrink-0">
+            {combo.image_url ? (
+              <Image src={combo.image_url} alt={combo.name} fill
+                sizes="(max-width: 640px) 100vw, 1536px" className=" object-cover" draggable={false} />
+            ) : hasProducts ? (
+              // Collage con las fotos de los productos del combo
+              <div className={`w-full h-full grid gap-0.5 bg-brand-200 ${
+                combo.products!.length === 1 ? 'grid-cols-1' :
+                combo.products!.length === 2 ? 'grid-cols-2' :
+                combo.products!.length === 3 ? 'grid-cols-2' :
+                'grid-cols-2'
+              }`}>
+                {combo.products!.slice(0, 4).map((p, i) => (
+                  <div key={p.id} className={`relative overflow-hidden ${
+                    combo.products!.length === 3 && i === 0 ? 'row-span-2' : ''
+                  }`}>
+                    {p.image_url ? (
+                      <Image src={p.image_url} alt={p.name} fill
+                        sizes="128px" className="object-cover" draggable={false} />
+                    ) : (
+                      <div className="w-full h-full bg-brand-100 flex items-center justify-center">
+                        <span className="text-2xl">📦</span>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
+            ) : (
+              <div className="w-full h-full bg-brand-100 flex items-center justify-center">
+                <span className="text-5xl">🎁</span>
+              </div>
+            )}
+
+            {/* Combo badge */}
+            <div className="absolute top-3 left-3 bg-brand-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+              🎁 Combo
             </div>
-          )}
+          </div>
+
+          {/* Info */}
+          <div className="flex-1 flex flex-col justify-center px-6 py-4 sm:py-8">
+            <span className="text-xs tracking-widest uppercase text-brand-500 font-semibold mb-2">
+              Combo especial
+            </span>
+            <h3 className="font-display text-2xl sm:text-3xl font-bold text-brand-800 leading-tight mb-1">
+              {combo.name}
+            </h3>
+            {combo.description && (
+              <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 mb-1">
+                {combo.description}
+              </p>
+            )}
+            {combo.price > 0 && (
+              <span className="font-display font-bold text-xl sm:text-2xl text-brand-600 mb-3">
+                ${combo.price.toLocaleString('es-AR')}
+              </span>
+            )}
+            {hasProducts && (
+              <div className="flex flex-col gap-1">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Incluye:</p>
+                <div className="flex gap-1.5">
+                  {combo.products!.map((p) => (
+                    <span key={p.id} className="bg-white text-brand-700 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm border border-brand-100">
+                      {p.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Modal para pedir el combo */}
+      {isOpen && (
+        <ProductModal item={combo} onClose={() => setIsOpen(false)} />
+      )}
+    </>
   )
 }

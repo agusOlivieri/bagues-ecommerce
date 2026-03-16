@@ -43,12 +43,12 @@ export async function POST(req: NextRequest) {
   const session = await requireAdmin()
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
-  const { name, description, image_url, featured, product_ids } = await req.json()
+  const { name, description, image_url, price, featured, product_ids } = await req.json()
   const supabase = createServiceClient()
 
   const { data: combo, error } = await supabase
     .from('combos')
-    .insert([{ name, description, image_url, featured }])
+    .insert([{ name, description, image_url, price, featured }])
     .select()
     .single()
 
@@ -72,12 +72,12 @@ export async function PUT(req: NextRequest) {
   const session = await requireAdmin()
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
-  const { id, name, description, image_url, featured, product_ids } = await req.json()
+  const { id, name, description, image_url, price, featured, product_ids } = await req.json()
   const supabase = createServiceClient()
 
   const { data: combo, error } = await supabase
     .from('combos')
-    .update({ name, description, image_url, featured })
+    .update({ name, description, image_url, price, featured })
     .eq('id', id)
     .select()
     .single()

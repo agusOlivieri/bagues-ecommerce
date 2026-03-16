@@ -1,21 +1,27 @@
 'use client'
 
 import { useState } from 'react'
-import { Product } from '@/types'
+import { Product, Combo } from '@/types'
 import { buildWhatsAppOrderUrl } from '@/lib/whatsapp'
 
 interface OrderButtonProps {
-  product: Product
+  item: Product | Combo
+}
+
+function isProduct(item: Product | Combo): item is Product {
+  return 'stock' in item
 }
 
 type ModalState = 'idle' | 'confirming'
 
-export default function OrderButton({ product }: OrderButtonProps) {
+export default function OrderButton({ item }: OrderButtonProps) {
   const [state, setState] = useState<ModalState>('idle')
-  const isOutOfStock = product.stock === 0
 
+  const product = isProduct(item) ? item : null
+  const isOutOfStock = product ? product.stock === 0 : false
+ 
   function handleConfirm() {
-    const url = buildWhatsAppOrderUrl(product)
+    const url = buildWhatsAppOrderUrl(item)
     window.open(url, '_blank', 'noopener,noreferrer')
     setState('idle')
   }
@@ -58,19 +64,17 @@ export default function OrderButton({ product }: OrderButtonProps) {
               </p>
             </div>
 
-            {/* Product summary */}
+            {/* Item summary */}
             <div className="bg-brand-50 rounded-xl p-4 flex flex-col gap-1">
               <span className="text-xs font-semibold text-brand-600 uppercase tracking-wide">
-                Producto seleccionado
+                {product ? 'Producto seleccionado' : 'Combo seleccionado'}
               </span>
               <span className="font-display font-semibold text-gray-800 text-lg leading-tight">
-                {product.name}
+                {item.name}
               </span>
-              {product.price > 0 && (
-                <span className="text-brand-600 font-bold font-display text-xl">
-                  ${product.price.toLocaleString('es-AR')}
-                </span>
-              )}
+              <span className="text-brand-600 font-bold font-display text-xl">
+                ${item.price.toLocaleString('es-AR')}
+              </span>
             </div>
 
             {/* WhatsApp icon + label */}

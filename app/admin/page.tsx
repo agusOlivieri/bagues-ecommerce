@@ -33,6 +33,7 @@ const emptyComboForm = {
   name: '',
   description: '',
   image_url: '',
+  price: 0,
   featured: false,
   product_ids: [] as string[],
 }
@@ -187,6 +188,7 @@ export default function AdminPage() {
       name: c.name,
       description: c.description ?? '',
       image_url: c.image_url ?? '',
+      price: c.price ?? 0,
       featured: c.featured ?? false,
       product_ids: c.products?.map((p) => p.id) ?? [],
     })
@@ -341,7 +343,7 @@ export default function AdminPage() {
                     <label className="block text-sm font-semibold text-gray-600 mb-1">Precio *</label>
                     <div className="relative">
                       <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">$</span>
-                      <input type="number" min={0} step={0.01} className="input-field pl-7" placeholder="0.00"
+                      <input type="number" min={0} className="input-field pl-7" placeholder="0.00"
                         value={productForm.price} onChange={(e) => setProductForm({ ...productForm, price: Number(e.target.value) })} />
                     </div>
                   </div>
@@ -483,7 +485,7 @@ export default function AdminPage() {
                     <div className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-brand-200 bg-brand-50 rounded-xl p-6 cursor-pointer hover:border-brand-400 hover:bg-brand-100 transition-colors"
                       onClick={() => comboFileRef.current?.click()}>
                       {comboForm.image_url ? (
-                        <div className="relative w-32 h-32">
+                        <div className="relative w-52 h-32">
                           <img src={comboForm.image_url} alt="" className="w-full h-full object-cover rounded-xl" />
                           <button type="button"
                             onClick={(e) => { e.stopPropagation(); setComboForm({ ...comboForm, image_url: '' }) }}
@@ -500,6 +502,14 @@ export default function AdminPage() {
                       )}
                     </div>
                     <input ref={comboFileRef} type="file" accept="image/png, image/jpeg, image/webp" className="hidden" onChange={handleComboImageUpload} />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-600 mb-1">Precio *</label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">$</span>
+                      <input type="number" min={0} className="input-field pl-7" placeholder="0.00"
+                        value={comboForm.price} onChange={(e) => setComboForm({ ...comboForm, price: Number(e.target.value) })} />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-600 mb-2">
