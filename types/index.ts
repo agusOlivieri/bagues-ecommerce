@@ -24,11 +24,11 @@ export interface Combo {
 
 export const CATEGORIES = [
   { value: 'perfume', label: 'Perfumes', emoji: '🌸' },
-  { value: 'aroma', label: 'Aromas', emoji: '🌹' },
+  { value: 'aromaterapia', label: 'Aromaterapia', emoji: '🌹' },
   { value: 'crema', label: 'Cremas', emoji: '🧴' },
-  { value: 'shampoo', label: 'Shampoos', emoji: '🚿' },
-  { value: 'acondicionador', label: 'Acondicionadores', emoji: '✨' },
-  { value: 'otro', label: 'Otros', emoji: '📦' },
+  // { value: 'shampoo', label: 'Shampoos', emoji: '🚿' },
+  // { value: 'acondicionador', label: 'Acondicionadores', emoji: '✨' },
+  // { value: 'otro', label: 'Otros', emoji: '📦' },
 ]
 
 export const PERFUME_BRANDS = [
