@@ -7,19 +7,22 @@ const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL!
 // GET - public, returns all products
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
-  const page     = Number(searchParams.get('page')     ?? 1)
-  const limit    = Number(searchParams.get('limit')    ?? 12)
+  const page     = Number(searchParams.get('page'))
+  const limit    = Number(searchParams.get('limit'))
   const search   = searchParams.get('search')   ?? ''
   const category = searchParams.get('category') ?? 'all'
-  const brand    = searchParams.get('brand')    ?? 'all'
+  const brand    = searchParams.get('brand') ?? 'all'
   const offset   = (page - 1) * limit
   const featured = searchParams.get('featured')
-  
+
   let query = supabase
   .from('products')
   .select('*', { count: 'exact' })
   .order('created_at', { ascending: false })
-  .range(offset, offset + limit - 1)
+
+  if (page && limit) {
+    query = query.range(offset, offset + limit - 1)
+  }
   
   if (featured === 'true') query = query.eq('featured', true)
   if (search)               query = query.ilike('name', `%${search}%`)
@@ -50,7 +53,7 @@ export async function POST(req: NextRequest) {
   const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('products')
-    .insert([{ name, description, category, brand: brand || null, stock, price, image_url, featured }])
+    .insert([{ name, description, category, brand: brand, stock, price, image_url, featured }])
     .select()
     .single()
 
@@ -69,7 +72,7 @@ export async function PUT(req: NextRequest) {
   const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('products')
-    .update({ name, description, category, brand: brand || null, stock, price, image_url, featured })
+    .update({ name, description, category, brand: brand, stock, price, image_url, featured })
     .eq('id', id)
     .select()
     .single()

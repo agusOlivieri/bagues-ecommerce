@@ -51,7 +51,6 @@ export default function CatalogPage() {
         const allCombos: Combo[]     = await combosRes.json()
         
         setFeaturedProducts(featuredData)
-        console.log(featuredData)
         setCombos(allCombos)
         setFeaturedCombos(allCombos.filter((c) => c.featured))
       } catch (err) {
@@ -71,7 +70,9 @@ export default function CatalogPage() {
         limit:    String(LIMIT),
         search:   debouncedSearch,
         category: selectedCategory,
-        ...(selectedBrand && selectedBrand !== 'all' ? { brand: selectedBrand } : {}),
+        ...(selectedBrand && selectedBrand !== 'all'
+              ? { brand: selectedBrand }  // manda 'none' cuando es "Otros"
+              : {}),
       })
 
       const res                            = await fetch(`/api/products?${params}`)

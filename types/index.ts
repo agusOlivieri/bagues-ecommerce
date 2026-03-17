@@ -3,7 +3,7 @@ export interface Product {
   name: string
   description: string | null
   category: string
-  brand: string | null
+  brand: string
   stock: number
   price: number
   image_url: string | null
@@ -33,5 +33,5 @@ export const CATEGORIES = [
 
 export const PERFUME_BRANDS = [
   { value: 'Unlock', label: '🔓 Unlock' },
-  { value: null, label: 'Otros' },
+  { value: 'none', label: 'Otros' },
 ]
