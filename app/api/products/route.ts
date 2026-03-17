@@ -1,19 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { createServiceClient } from '@/lib/supabase'
+import { createServiceClient, supabase } from '@/lib/supabase'
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL!
 
 // GET - public, returns all products
-export async function GET() {
-  const supabase = createServiceClient()
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .order('created_at', { ascending: false })
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
+  const page     = Number(searchParams.get('page'))
+  const limit    = Number(searchParams.get('limit'))
+  const search   = searchParams.get('search')   ?? ''
+  const category = searchParams.get('category') ?? 'all'
+  const brand    = searchParams.get('brand') ?? 'all'
+  const offset   = (page - 1) * limit
+  const featured = searchParams.get('featured')
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data)
+  let query = supabase
+  .from('products')
+  .select('*', { count: 'exact' })
+  .order('created_at', { ascending: false })
+
+  if (page && limit) {
+    query = query.range(offset, offset + limit - 1)
+  }
+  
+  if (featured === 'true') query = query.eq('featured', true)
+  if (search)               query = query.ilike('name', `%${search}%`)
+  if (category !== 'all')   query = query.eq('category', category)
+  if (brand !== 'all')      query = query.eq('brand', brand)
+
+  const { data, count } = await query
+  return NextResponse.json({ products: data, total: count })
 }
 
 // Middleware: check admin
@@ -36,7 +53,7 @@ export async function POST(req: NextRequest) {
   const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('products')
-    .insert([{ name, description, category, brand: brand || null, stock, price, image_url, featured }])
+    .insert([{ name, description, category, brand: brand, stock, price, image_url, featured }])
     .select()
     .single()
 
@@ -55,7 +72,7 @@ export async function PUT(req: NextRequest) {
   const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('products')
-    .update({ name, description, category, brand: brand || null, stock, price, image_url, featured })
+    .update({ name, description, category, brand: brand, stock, price, image_url, featured })
     .eq('id', id)
     .select()
     .single()
