@@ -1,19 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { createServiceClient } from '@/lib/supabase'
+import { createServiceClient, supabase } from '@/lib/supabase'
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL!
 
 // GET - public, returns all products
-export async function GET() {
-  const supabase = createServiceClient()
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .order('created_at', { ascending: false })
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
+  const page     = Number(searchParams.get('page')     ?? 1)
+  const limit    = Number(searchParams.get('limit')    ?? 12)
+  const search   = searchParams.get('search')   ?? ''
+  const category = searchParams.get('category') ?? 'all'
+  const brand    = searchParams.get('brand')    ?? 'all'
+  const offset   = (page - 1) * limit
+  const featured = searchParams.get('featured')
+  
+  let query = supabase
+  .from('products')
+  .select('*', { count: 'exact' })
+  .order('created_at', { ascending: false })
+  .range(offset, offset + limit - 1)
+  
+  if (featured === 'true') query = query.eq('featured', true)
+  if (search)               query = query.ilike('name', `%${search}%`)
+  if (category !== 'all')   query = query.eq('category', category)
+  if (brand !== 'all')      query = query.eq('brand', brand)
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data)
+  const { data, count } = await query
+  return NextResponse.json({ products: data, total: count })
 }
 
 // Middleware: check admin
