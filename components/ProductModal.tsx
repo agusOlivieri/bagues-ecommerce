@@ -128,7 +128,7 @@ export default function ProductModal({ item, onClose }: { item: Product | Combo;
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm"
+      className="fixed inset-0 z-50 px-2 flex items-center justify-center p-0 sm:p-4 bg-black/40 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
@@ -167,7 +167,7 @@ export default function ProductModal({ item, onClose }: { item: Product | Combo;
           {/* Category pill — solo en productos */}
           {product && (
             <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-brand-600 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm capitalize">
-              {product.brand ? `🔓 ${product.brand}` : product.category}
+              {product.brand !== 'none' ? `🔓 ${product.brand}` : product.category}
             </span>
           )}
         </div>
