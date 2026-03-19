@@ -25,6 +25,7 @@ export interface Combo {
 export const CATEGORIES = [
   { value: 'perfume', label: 'Perfumes', emoji: '🌸' },
   { value: 'aromaterapia', label: 'Aromaterapia', emoji: '🌹' },
+  { value: 'spray', label: 'Sprays', emoji: '💨' }, 
   { value: 'crema', label: 'Cremas', emoji: '🧴' },
   // { value: 'shampoo', label: 'Shampoos', emoji: '🚿' },
   // { value: 'acondicionador', label: 'Acondicionadores', emoji: '✨' },
