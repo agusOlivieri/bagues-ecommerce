@@ -224,7 +224,7 @@ export default function CatalogPage() {
               {AROMATHERAPY_CATEGORIES.map((b) => (
                 <button
                   key={b.value}
-                  onClick={() => setSelectedCategory(b.value)}
+                  onClick={() => setSelectedSubCategory(b.value)}
                   className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                     selectedSubCategory === b.value
                       ? 'bg-brand-800 text-white shadow-md'
