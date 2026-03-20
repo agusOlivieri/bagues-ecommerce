@@ -3,26 +3,24 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSession, signIn } from 'next-auth/react'
 import Navbar from '@/components/Navbar'
-import { Product, Combo, CATEGORIES, PERFUME_BRANDS } from '@/types'
+import { Product, Combo, CATEGORIES, PERFUME_BRANDS, AROMATHERAPY_CATEGORIES } from '@/types'
 
 type ProductFormData = {
   name: string
   description: string
   category: string
-  brand: string
+  subcategory: string
   stock: number
   price: number
   image_url: string
   featured: boolean
 }
 
-const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? ''
-
 const emptyProductForm: ProductFormData = {
   name: '',
   description: '',
   category: 'perfume',
-  brand: 'none',
+  subcategory: 'none',
   stock: 0,
   price: 0,
   image_url: '',
@@ -57,6 +55,12 @@ export default function AdminPage() {
   const [editingCombo, setEditingCombo] = useState<string | null>(null)
   const [showComboForm, setShowComboForm] = useState(false)
   const [deleteComboConfirm, setDeleteComboConfirm] = useState<string | null>(null)
+
+  // Product list filters
+  const [filterCategory, setFilterCategory] = useState<string>('all')
+  const [filterSubcategory, setFilterSubcategory] = useState<string>('all')
+  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [sortBy, setSortBy] = useState<'name' | 'stock_asc' | 'stock_desc' | 'price_asc' | 'price_desc'>('name')
 
   // Shared
   const [saving, setSaving] = useState(false)
@@ -124,7 +128,7 @@ export default function AdminPage() {
       name: p.name,
       description: p.description ?? '',
       category: p.category,
-      brand: p.brand ?? 'none',
+      subcategory: p.subcategory ?? 'none',
       stock: p.stock,
       price: p.price ?? 0,
       image_url: p.image_url ?? '',
@@ -204,6 +208,40 @@ export default function AdminPage() {
     setEditingCombo(null)
     setShowComboForm(false)
   }
+
+  // ─── Filtered & sorted products ──────────────────────────
+  const filteredProducts = products
+    .filter((p) => filterCategory === 'all' || p.category === filterCategory)
+    .filter((p) => {
+      if (filterSubcategory === 'all') return true
+      return (p.subcategory ?? 'none') === filterSubcategory
+    })
+    .filter((p) => !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => {
+      if (sortBy === 'name') return a.name.localeCompare(b.name)
+      if (sortBy === 'stock_asc') return a.stock - b.stock
+      if (sortBy === 'stock_desc') return b.stock - a.stock
+      if (sortBy === 'price_asc') return (a.price ?? 0) - (b.price ?? 0)
+      if (sortBy === 'price_desc') return (b.price ?? 0) - (a.price ?? 0)
+      return 0
+    })
+
+  const subcategoryOptions = filterCategory === 'perfume'
+    ? PERFUME_BRANDS
+    : filterCategory === 'aromaterapia'
+    ? AROMATHERAPY_CATEGORIES
+    : []
+
+  function handleCategoryFilterChange(cat: string) {
+    setFilterCategory(cat)
+    setFilterSubcategory('all')
+  }
+
+  // Category counts for badge display
+  const categoryCounts = products.reduce<Record<string, number>>((acc, p) => {
+    acc[p.category] = (acc[p.category] ?? 0) + 1
+    return acc
+  }, {})
 
   function toggleProductInCombo(productId: string) {
     setComboForm((f) => ({
@@ -319,7 +357,7 @@ export default function AdminPage() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-600 mb-1">Categoría *</label>
                     <select className="input-field" value={productForm.category}
-                      onChange={(e) => setProductForm({ ...productForm, category: e.target.value, brand: 'none' })}>
+                      onChange={(e) => setProductForm({ ...productForm, category: e.target.value, subcategory: 'none' })}>
                       {CATEGORIES.map((cat) => (
                         <option key={cat.value} value={cat.value}>{cat.emoji} {cat.label}</option>
                       ))}
@@ -328,10 +366,21 @@ export default function AdminPage() {
                   {productForm.category === 'perfume' && (
                     <div>
                       <label className="block text-sm font-semibold text-gray-600 mb-1">Marca</label>
-                      <select className="input-field" value={productForm.brand}
-                        onChange={(e) => setProductForm({ ...productForm, brand: e.target.value })}>
+                      <select className="input-field" value={productForm.subcategory}
+                        onChange={(e) => setProductForm({ ...productForm, subcategory: e.target.value })}>
                         {PERFUME_BRANDS.map((b) => (
                           <option key={b.value} value={b.value || 'none'}>{b.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  {productForm.category === 'aromaterapia' && (
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-600 mb-1">Categoría</label>
+                      <select className="input-field" value={productForm.subcategory}
+                        onChange={(e) => setProductForm({ ...productForm, subcategory: e.target.value })}>
+                        {AROMATHERAPY_CATEGORIES.map((subcat) => (
+                          <option key={subcat.value} value={subcat.value || 'spray'}>{subcat.label}</option>
                         ))}
                       </select>
                     </div>
@@ -398,6 +447,119 @@ export default function AdminPage() {
               </div>
             )}
 
+            {/* ── Filter & search bar ── */}
+            {!loadingProducts && products.length > 0 && (
+              <div className="mb-5 space-y-3">
+                {/* Search + sort row */}
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <div className="relative flex-1">
+                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+                    </svg>
+                    <input
+                      className="input-field pl-9 text-sm"
+                      placeholder="Buscar producto..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                    {searchQuery && (
+                      <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-brand-600">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                  <select
+                    className="input-field text-sm w-full sm:w-44 shrink-0"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                  >
+                    <option value="name">Nombre A–Z</option>
+                    <option value="stock_asc">Stock: menor primero</option>
+                    <option value="stock_desc">Stock: mayor primero</option>
+                    <option value="price_asc">Precio: menor primero</option>
+                    <option value="price_desc">Precio: mayor primero</option>
+                  </select>
+                </div>
+
+                {/* Category filter pills */}
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => handleCategoryFilterChange('all')}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all border ${
+                      filterCategory === 'all'
+                        ? 'bg-brand-600 text-white border-brand-600'
+                        : 'bg-white text-gray-500 border-gray-200 hover:border-brand-400 hover:text-brand-600'
+                    }`}
+                  >
+                    Todas ({products.length})
+                  </button>
+                  {CATEGORIES.map((cat) => {
+                    const count = categoryCounts[cat.value] ?? 0
+                    if (count === 0) return null
+                    return (
+                      <button
+                        key={cat.value}
+                        onClick={() => handleCategoryFilterChange(cat.value)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all border ${
+                          filterCategory === cat.value
+                            ? 'bg-brand-600 text-white border-brand-600'
+                            : 'bg-white text-gray-500 border-gray-200 hover:border-brand-400 hover:text-brand-600'
+                        }`}
+                      >
+                        {cat.emoji} {cat.label} ({count})
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {/* Subcategory filter pills (only when relevant) */}
+                {subcategoryOptions.length > 0 && (
+                  <div className="flex flex-wrap gap-2 pl-1 border-l-2 border-brand-200 ml-1">
+                    <button
+                      onClick={() => setFilterSubcategory('all')}
+                      className={`px-3 py-1 rounded-full text-xs font-semibold transition-all border ${
+                        filterSubcategory === 'all'
+                          ? 'bg-brand-100 text-brand-700 border-brand-300'
+                          : 'bg-white text-gray-400 border-gray-200 hover:border-brand-300 hover:text-brand-600'
+                      }`}
+                    >
+                      Todas las marcas
+                    </button>
+                    {subcategoryOptions.map((sub) => (
+                      sub.value ? (
+                        <button
+                          key={sub.value}
+                          onClick={() => setFilterSubcategory(sub.value)}
+                          className={`px-3 py-1 rounded-full text-xs font-semibold transition-all border ${
+                            filterSubcategory === sub.value
+                              ? 'bg-brand-100 text-brand-700 border-brand-300'
+                              : 'bg-white text-gray-400 border-gray-200 hover:border-brand-300 hover:text-brand-600'
+                          }`}
+                        >
+                          {sub.label}
+                        </button>
+                      ) : null
+                    ))}
+                  </div>
+                )}
+
+                {/* Active filter summary */}
+                {(filterCategory !== 'all' || searchQuery) && (
+                  <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <span>{filteredProducts.length} producto{filteredProducts.length !== 1 ? 's' : ''} encontrado{filteredProducts.length !== 1 ? 's' : ''}</span>
+                    <button
+                      onClick={() => { setFilterCategory('all'); setFilterSubcategory('all'); setSearchQuery('') }}
+                      className="text-brand-500 hover:text-brand-700 font-semibold underline underline-offset-2"
+                    >
+                      Limpiar filtros
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
             {loadingProducts ? (
               <div className="space-y-3">
                 {[1,2,3].map((i) => (
@@ -415,9 +577,20 @@ export default function AdminPage() {
                 <div className="text-5xl mb-3">📦</div>
                 <p className="text-gray-400">Todavía no hay productos. ¡Creá el primero!</p>
               </div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="text-4xl mb-3">🔍</div>
+                <p className="text-gray-400">No se encontraron productos con esos filtros.</p>
+                <button
+                  onClick={() => { setFilterCategory('all'); setFilterSubcategory('all'); setSearchQuery('') }}
+                  className="mt-3 text-sm text-brand-500 hover:text-brand-700 font-semibold underline underline-offset-2"
+                >
+                  Limpiar filtros
+                </button>
+              </div>
             ) : (
               <div className="space-y-3">
-                {products.map((product) => (
+                {filteredProducts.map((product) => (
                   <div key={product.id} className="card p-4 flex gap-4 items-center">
                     <div className="w-16 h-16 rounded-xl bg-brand-50 shrink-0 overflow-hidden">
                       {product.image_url
@@ -427,7 +600,7 @@ export default function AdminPage() {
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-800 truncate">{product.name}</p>
                       <p className="text-xs text-gray-400 capitalize mt-0.5">
-                        {product.brand ? `${product.category} · ${product.brand}` : product.category}
+                        {product.subcategory ? `${product.category} · ${product.subcategory === 'none' ? 'Otros' : product.subcategory}` : product.category}
                       </p>
                       <div className="mt-1 flex items-center gap-2 flex-wrap">
                         {product.stock === 0 ? <span className="badge-out-of-stock">Sin stock</span>

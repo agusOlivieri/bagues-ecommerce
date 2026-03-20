@@ -40,7 +40,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
           {/* Category pill */}
           <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-brand-600 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm capitalize">
-            {product.brand === 'none' ? product.category : '🔓 ' + product.brand}
+            {product.subcategory === 'Unlock' ? '🔓 ' + product.subcategory : product.subcategory === 'none' ? 'Otros' : product.subcategory}
           </span>
         </div>
 

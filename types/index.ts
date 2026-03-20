@@ -3,7 +3,7 @@ export interface Product {
   name: string
   description: string | null
   category: string
-  brand: string
+  subcategory: string
   stock: number
   price: number
   image_url: string | null
@@ -25,8 +25,6 @@ export interface Combo {
 export const CATEGORIES = [
   { value: 'perfume', label: 'Perfumes', emoji: '🌸' },
   { value: 'aromaterapia', label: 'Aromaterapia', emoji: '🌹' },
-  { value: 'spray', label: 'Sprays', emoji: '💨' }, 
-  { value: 'crema', label: 'Cremas', emoji: '🧴' },
   // { value: 'shampoo', label: 'Shampoos', emoji: '🚿' },
   // { value: 'acondicionador', label: 'Acondicionadores', emoji: '✨' },
   // { value: 'otro', label: 'Otros', emoji: '📦' },
@@ -34,5 +32,12 @@ export const CATEGORIES = [
 
 export const PERFUME_BRANDS = [
   { value: 'Unlock', label: '🔓 Unlock' },
+  { value: 'none', label: 'Otros' },
+]
+
+export const AROMATHERAPY_CATEGORIES = [
+  { value: 'spray', label: 'Sprays', emoji: '💨' }, 
+  { value: 'crema', label: 'Cremas', emoji: '🧴' },
+  { value: 'crema-balsamo', label: 'Cremas Bálsamo', emoji: '🪔' },
   { value: 'none', label: 'Otros' },
 ]

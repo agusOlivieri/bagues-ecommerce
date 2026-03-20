@@ -162,7 +162,7 @@ function ProductSlide({ product }: { product: Product }) {
         </div>
         <div className="flex-1 flex flex-col justify-center px-6 py-4 sm:py-8">
           <span className="text-xs tracking-widest uppercase text-brand-400 font-semibold">
-            {product.brand ?? product.category}
+            {product.subcategory ?? product.category}
           </span>
           <h3 className="font-display text-2xl sm:text-3xl font-bold text-brand-800 leading-tight mb-1">
             {product.name}

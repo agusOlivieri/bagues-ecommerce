@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import Navbar from '@/components/Navbar'
 import ProductCard from '@/components/ProductCard'
 import FeaturedSlider from '@/components/FeaturedSlider'
-import { Product, Combo, CATEGORIES, PERFUME_BRANDS } from '@/types'
+import { Product, Combo, CATEGORIES, PERFUME_BRANDS, AROMATHERAPY_CATEGORIES } from '@/types'
 
 const LIMIT = 12
 
@@ -18,7 +18,7 @@ export default function CatalogPage() {
   // ── Filtros ───────────────────────────────────────────────────────────────
   const [search, setSearch]                   = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [selectedBrand, setSelectedBrand]     = useState<string | null>('all')
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string>('all')
 
   // ── Paginación ────────────────────────────────────────────────────────────
   const [page, setPage]                       = useState(1)
@@ -70,8 +70,8 @@ export default function CatalogPage() {
         limit:    String(LIMIT),
         search:   debouncedSearch,
         category: selectedCategory,
-        ...(selectedBrand && selectedBrand !== 'all'
-              ? { brand: selectedBrand }  // manda 'none' cuando es "Otros"
+        ...(selectedSubCategory && selectedSubCategory !== 'all'
+              ? { subcategory: selectedSubCategory }  // manda 'none' cuando es "Otros"
               : {}),
       })
 
@@ -87,7 +87,7 @@ export default function CatalogPage() {
       setLoading(false)
       setLoadingPage(false)
     }
-  }, [debouncedSearch, selectedCategory, selectedBrand])
+  }, [debouncedSearch, selectedCategory, selectedSubCategory])
 
   // ── Re-fetch cuando cambian filtros (resetea a página 1) ──────────────────
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function CatalogPage() {
   // ── Handlers de filtros (resetean página automáticamente vía useEffect) ───
   function handleCategoryChange(cat: string) {
     setSelectedCategory(cat)
-    setSelectedBrand('all')
+    setSelectedSubCategory('all')
   }
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -183,9 +183,9 @@ export default function CatalogPage() {
           {selectedCategory === 'perfume' && (
             <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0 no-scrollbar border-t border-brand-100 pt-2 sm:border-t-0 sm:pt-0 sm:border-l sm:pl-3">
               <button
-                onClick={() => setSelectedBrand('all')}
+                onClick={() => setSelectedSubCategory('all')}
                 className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                  selectedBrand === 'all'
+                  selectedSubCategory === 'all'
                     ? 'bg-brand-800 text-white shadow-md'
                     : 'bg-brand-100 text-brand-700 hover:bg-brand-200'
                 }`}
@@ -195,9 +195,38 @@ export default function CatalogPage() {
               {PERFUME_BRANDS.map((b) => (
                 <button
                   key={b.value}
-                  onClick={() => setSelectedBrand(b.value)}
+                  onClick={() => setSelectedSubCategory(b.value)}
                   className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                    selectedBrand === b.value
+                    selectedSubCategory === b.value
+                      ? 'bg-brand-800 text-white shadow-md'
+                      : 'bg-brand-100 text-brand-700 hover:bg-brand-200'
+                  }`}
+                >
+                  {b.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Category subfilter */}
+          {selectedCategory === 'aromaterapia' && (
+            <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0 no-scrollbar border-t border-brand-100 pt-2 sm:border-t-0 sm:pt-0 sm:border-l sm:pl-3">
+              <button
+                onClick={() => setSelectedSubCategory('all')}
+                className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  selectedSubCategory === 'all'
+                    ? 'bg-brand-800 text-white shadow-md'
+                    : 'bg-brand-100 text-brand-700 hover:bg-brand-200'
+                }`}
+              >
+                Todos los productos
+              </button>
+              {AROMATHERAPY_CATEGORIES.map((b) => (
+                <button
+                  key={b.value}
+                  onClick={() => setSelectedSubCategory(b.value)}
+                  className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                    selectedSubCategory === b.value
                       ? 'bg-brand-800 text-white shadow-md'
                       : 'bg-brand-100 text-brand-700 hover:bg-brand-200'
                   }`}
