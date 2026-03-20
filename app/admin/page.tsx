@@ -63,8 +63,9 @@ export default function AdminPage() {
   const [uploading, setUploading] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const comboFileRef = useRef<HTMLInputElement>(null)
-
-  const isAdmin = session?.user?.email === ADMIN_EMAIL
+  
+  const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? '').split(',')
+  const isAdmin = ADMIN_EMAILS.includes(session?.user?.email ?? '')
 
   useEffect(() => {
     if (isAdmin) {

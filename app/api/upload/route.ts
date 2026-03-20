@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { createServiceClient } from '@/lib/supabase'
 
-const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL!
+const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? '').split(',')
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession()
-  if (!session?.user?.email || session.user.email !== ADMIN_EMAIL) {
+  if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
 
