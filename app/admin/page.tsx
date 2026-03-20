@@ -3,26 +3,24 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSession, signIn } from 'next-auth/react'
 import Navbar from '@/components/Navbar'
-import { Product, Combo, CATEGORIES, PERFUME_BRANDS } from '@/types'
+import { Product, Combo, CATEGORIES, PERFUME_BRANDS, AROMATHERAPY_CATEGORIES } from '@/types'
 
 type ProductFormData = {
   name: string
   description: string
   category: string
-  brand: string
+  subcategory: string
   stock: number
   price: number
   image_url: string
   featured: boolean
 }
 
-const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? ''
-
 const emptyProductForm: ProductFormData = {
   name: '',
   description: '',
   category: 'perfume',
-  brand: 'none',
+  subcategory: 'none',
   stock: 0,
   price: 0,
   image_url: '',
@@ -124,7 +122,7 @@ export default function AdminPage() {
       name: p.name,
       description: p.description ?? '',
       category: p.category,
-      brand: p.brand ?? 'none',
+      subcategory: p.subcategory ?? 'none',
       stock: p.stock,
       price: p.price ?? 0,
       image_url: p.image_url ?? '',
@@ -319,7 +317,7 @@ export default function AdminPage() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-600 mb-1">Categoría *</label>
                     <select className="input-field" value={productForm.category}
-                      onChange={(e) => setProductForm({ ...productForm, category: e.target.value, brand: 'none' })}>
+                      onChange={(e) => setProductForm({ ...productForm, category: e.target.value, subcategory: 'none' })}>
                       {CATEGORIES.map((cat) => (
                         <option key={cat.value} value={cat.value}>{cat.emoji} {cat.label}</option>
                       ))}
@@ -328,10 +326,21 @@ export default function AdminPage() {
                   {productForm.category === 'perfume' && (
                     <div>
                       <label className="block text-sm font-semibold text-gray-600 mb-1">Marca</label>
-                      <select className="input-field" value={productForm.brand}
-                        onChange={(e) => setProductForm({ ...productForm, brand: e.target.value })}>
+                      <select className="input-field" value={productForm.subcategory}
+                        onChange={(e) => setProductForm({ ...productForm, subcategory: e.target.value })}>
                         {PERFUME_BRANDS.map((b) => (
                           <option key={b.value} value={b.value || 'none'}>{b.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  {productForm.category === 'aromaterapia' && (
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-600 mb-1">Categoría</label>
+                      <select className="input-field" value={productForm.subcategory}
+                        onChange={(e) => setProductForm({ ...productForm, subcategory: e.target.value })}>
+                        {AROMATHERAPY_CATEGORIES.map((subcat) => (
+                          <option key={subcat.value} value={subcat.value || 'spray'}>{subcat.label}</option>
                         ))}
                       </select>
                     </div>
@@ -427,7 +436,7 @@ export default function AdminPage() {
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-800 truncate">{product.name}</p>
                       <p className="text-xs text-gray-400 capitalize mt-0.5">
-                        {product.brand ? `${product.category} · ${product.brand}` : product.category}
+                        {product.subcategory ? `${product.category} · ${product.subcategory === 'none' ? 'Otros' : product.subcategory}` : product.category}
                       </p>
                       <div className="mt-1 flex items-center gap-2 flex-wrap">
                         {product.stock === 0 ? <span className="badge-out-of-stock">Sin stock</span>

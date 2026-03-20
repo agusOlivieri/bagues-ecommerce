@@ -11,7 +11,7 @@ export async function GET(req: Request) {
   const limit    = Number(searchParams.get('limit'))
   const search   = searchParams.get('search')   ?? ''
   const category = searchParams.get('category') ?? 'all'
-  const brand    = searchParams.get('brand') ?? 'all'
+  const subcategory = searchParams.get('subcategory') ?? 'all'
   const offset   = (page - 1) * limit
   const featured = searchParams.get('featured')
 
@@ -27,7 +27,7 @@ export async function GET(req: Request) {
   if (featured === 'true') query = query.eq('featured', true)
   if (search)               query = query.ilike('name', `%${search}%`)
   if (category !== 'all')   query = query.eq('category', category)
-  if (brand !== 'all')      query = query.eq('brand', brand)
+  if (subcategory !== 'all') query = query.eq('subcategory', subcategory)
 
   const { data, count } = await query
   return NextResponse.json({ products: data, total: count })
@@ -48,12 +48,12 @@ export async function POST(req: NextRequest) {
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
   const body = await req.json()
-  const { name, description, category, brand, stock, price, image_url, featured } = body
+  const { name, description, category, subcategory, stock, price, image_url, featured } = body
 
   const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('products')
-    .insert([{ name, description, category, brand: brand, stock, price, image_url, featured }])
+    .insert([{ name, description, category, subcategory, stock, price, image_url, featured }])
     .select()
     .single()
 
@@ -67,12 +67,12 @@ export async function PUT(req: NextRequest) {
   if (!session) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
   const body = await req.json()
-  const { id, name, description, category, brand, stock, price, image_url, featured } = body
+  const { id, name, description, category, subcategory, stock, price, image_url, featured } = body
 
   const supabase = createServiceClient()
   const { data, error } = await supabase
     .from('products')
-    .update({ name, description, category, brand: brand, stock, price, image_url, featured })
+    .update({ name, description, category, subcategory, stock, price, image_url, featured })
     .eq('id', id)
     .select()
     .single()
