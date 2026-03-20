@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { createServiceClient, supabase } from '@/lib/supabase'
 
-const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL!
+const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAIL ?? '').split(',')
 
 // GET - public, returns all products
 export async function GET(req: Request) {
@@ -36,7 +36,7 @@ export async function GET(req: Request) {
 // Middleware: check admin
 async function requireAdmin() {
   const session = await getServerSession()
-  if (!session?.user?.email || session.user.email !== ADMIN_EMAIL) {
+  if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
     return null
   }
   return session
